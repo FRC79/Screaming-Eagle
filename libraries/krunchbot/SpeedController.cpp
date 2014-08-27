@@ -1,4 +1,3 @@
-
 #include "SpeedController.h"
 
 SpeedController::SpeedController(){
@@ -10,6 +9,8 @@ float SpeedController::limit(float value){
 		return 1.0f;
 	} else if (value < -1.0f){
 		return -1.0f;
+	} else {
+		return value;
 	}
 }
 
