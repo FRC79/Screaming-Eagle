@@ -2,6 +2,8 @@ import procontroll.*;
 import net.java.games.input.*;
 import processing.serial.*;
 
+Serial robotPort;
+
 ControllIO controll;
 ControllDevice gamepad;
 ControllSlider movStick;
@@ -16,6 +18,9 @@ PFont font;
 
 float DEBOUNCE_TOLERANCE = 0.25;
 float TRIGGER_TOLERANCE = 0.75;
+float UPDATE_DELAY = 200; // millis
+
+unsigned long prevTime = 0;
 
 float deadband(float input){
   return (abs(input) <= DEBOUNCE_TOLERANCE) ? 0 : input;
@@ -32,7 +37,16 @@ int getGamepadId(){
   return -1;
 }
 
+// TODO
+int getSerialId(){
+  return -1;
+}
+
 void setup(){
+  // Establish serial connection with robot controller
+  robotPort = new Serial(this, Serial.list()[0], 9600); 
+  println(Serial.list());  
+  
   // Setup the controller (start indexing from 0)
   controll = ControllIO.getInstance(this);
   gamepad = controll.getDevice(getGamepadId());
@@ -43,6 +57,8 @@ void setup(){
   armLeftBumper = gamepad.getButton(4);
   armRightBumper = gamepad.getButton(5);
   fireAButton = gamepad.getButton(0);
+  
+  prevTime = millis();
   
   // Setup the window
   size(400, 400);
@@ -59,6 +75,13 @@ void draw(){
   
   boolean armed = (armTrigger.getValue() >= TRIGGER_TOLERANCE && armLeftBumper.pressed() && armRightBumper.pressed());
   boolean fire = (armed && fireAButton.pressed());
+  
+  // Send values to robot controller
+  if(millis() - prevTime >= UPDATE_DELAY){
+    robotPort.write("Stuff\n");
+    
+    prevTime = millis();
+  }
   
   // Output values in the window
   background(255);
