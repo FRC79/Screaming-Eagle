@@ -12,6 +12,8 @@ ControllButton armLeftBumper;
 ControllButton armRightBumper;
 ControllButton fireAButton;
 
+PFont font;
+
 float DEBOUNCE_TOLERANCE = 0.25;
 float TRIGGER_TOLERANCE = 0.75;
 
