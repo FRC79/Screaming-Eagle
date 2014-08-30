@@ -32,7 +32,7 @@ float deadband(float input){
 int getGamepadId(){
   for(int i=0; i < controll.getNumberOfDevices(); i++){
     ControllDevice device = controll.getDevice(i);
-    if(device.getName().equals("Controller (Gamepad F310)")){
+    if(device.getName().contains("Controller")){
       return i;
     }
   }
