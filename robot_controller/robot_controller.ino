@@ -17,10 +17,10 @@ float fillRight = 0.0;
 
 RobotDrive drive;
 SpeedController elevator;
-Relay leftComp(2, 12);
-Relay rightComp(3, 13);
-Relay leftShot(6, 4);
-Relay rightShot(7, 5);
+Relay leftComp(2);
+Relay rightComp(3);
+Relay leftShot(6);
+Relay rightShot(7);
 
 void setup(){
   drive.init(10, 11); // left and right victor pins

@@ -5,6 +5,7 @@
 
 class Relay {
 public:
+	Relay(int forward_pin);
 	Relay(int forward_pin, int reverse_pin);
 
 	void init();
@@ -17,6 +18,9 @@ public:
 private:
 	int m_forward_pin;
 	int m_reverse_pin;
+	bool m_using_both_pins;
+
+	void setForwardAndReverse(int forward, int reverse);
 };
 
 #endif
