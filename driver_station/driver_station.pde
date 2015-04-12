@@ -5,10 +5,12 @@ import processing.serial.*;
 Serial robotPort;
 
 ControllIO controll;
+
 ControllDevice gamepad;
 ControllSlider movStick;
 ControllSlider rotStick;
 ControllSlider elevStick;
+ControllSlider turretStick;
 ControllSlider armTrigger;
 ControllButton armLeftBumper;
 ControllButton armRightBumper;
@@ -57,6 +59,7 @@ void setup(){
   movStick = gamepad.getSlider(0);
   rotStick = gamepad.getSlider(1);
   elevStick = gamepad.getSlider(2);
+  turretStick = gamepad.getSlider(3);
   armTrigger = gamepad.getSlider(4);
   armLeftBumper = gamepad.getButton(4);
   armRightBumper = gamepad.getButton(5);
@@ -64,11 +67,12 @@ void setup(){
   fireRightButton = gamepad.getButton(1);
   fillLeftButton = gamepad.getButton(6);
   fillRightButton = gamepad.getButton(7);
+  fillBothButton = gamepad.getButton(0);
   
   prevTime = millis();
   
   // Setup the window
-  size(400, 400);
+  size(400, 460);
   font = createFont("Arial", 18, true);
   textFont(font);
   textAlign(LEFT);
@@ -79,17 +83,18 @@ void draw(){
   float mov = deadband(-movStick.getValue());
   float rot = deadband(rotStick.getValue());
   float elev = deadband(-elevStick.getValue());
+  float turret = deadband(turretStick.getValue());
   
   boolean armed = (armTrigger.getValue() >= TRIGGER_TOLERANCE && armLeftBumper.pressed());
   float fireLeft = (armed && fireLeftButton.pressed() && !fireRightButton.pressed()) ? 1.0 : 0.0;
   float fireRight = (armed && fireRightButton.pressed() && !fireLeftButton.pressed()) ? 1.0 : 0.0;
   
-  float fillLeft = (fillLeftButton.pressed()) ? 1.0 : 0.0;
-  float fillRight = (fillRightButton.pressed()) ? 1.0 : 0.0;
+  float fillLeft = (fillLeftButton.pressed() || fillBothButton.pressed()) ? 1.0 : 0.0;
+  float fillRight = (fillRightButton.pressed() || fillBothButton.pressed()) ? 1.0 : 0.0;
   
   // Send values to robot controller
   if(millis() - prevTime >= UPDATE_DELAY){
-    robotPort.write(mov+","+rot+","+elev+","+fireLeft+","+fireRight+","+fillLeft+","+fillRight+"\n");
+    robotPort.write(mov+","+rot+","+elev+","+turret+","+fireLeft+","+fireRight+","+fillLeft+","+fillRight+"\n");
     
     prevTime = millis();
   }
@@ -100,9 +105,10 @@ void draw(){
   text("Mov: " + mov, 30, 80);
   text("Rot: " + rot, 30, 120);
   text("Elev: " + elev, 30, 160);
-  text("Armed: " + armed, 30, 200);
-  text("FireLeft: " + fireLeft, 30, 240);
-  text("FireRight: " + fireRight, 30, 280);
-  text("FillLeft: " + fillLeft, 30, 320);
-  text("FillRight: " + fillRight, 30, 360);
+  text("Turret: " + turret, 30, 200);
+  text("Armed: " + armed, 30, 240);
+  text("FireLeft: " + fireLeft, 30, 280);
+  text("FireRight: " + fireRight, 30, 320);
+  text("FillLeft: " + fillLeft, 30, 360);
+  text("FillRight: " + fillRight, 30, 400);
 }
