@@ -11,13 +11,14 @@ ControllSlider movStick;
 ControllSlider rotStick;
 ControllSlider elevStick;
 ControllSlider turretStick;
-ControllSlider armTrigger;
+ControllButton armLeftTrigger;
 ControllButton armLeftBumper;
-ControllButton armRightBumper;
+ControllButton armRightTrigger;
 ControllButton fireLeftButton;
 ControllButton fireRightButton;
 ControllButton fillLeftButton;
 ControllButton fillRightButton;
+ControllButton fillBothButton;
 
 PFont font;
 
@@ -34,7 +35,7 @@ float deadband(float input){
 int getGamepadId(){
   for(int i=0; i < controll.getNumberOfDevices(); i++){
     ControllDevice device = controll.getDevice(i);
-    if(device.getName().contains("Controller")){
+    if(device.getName().contains("Controller") || device.getName().contains("Logitech Dual Action")){
       return i;
     }
   }
@@ -60,14 +61,14 @@ void setup(){
   rotStick = gamepad.getSlider(1);
   elevStick = gamepad.getSlider(2);
   turretStick = gamepad.getSlider(3);
-  armTrigger = gamepad.getSlider(4);
-  armLeftBumper = gamepad.getButton(4);
-  armRightBumper = gamepad.getButton(5);
-  fireLeftButton = gamepad.getButton(2);
-  fireRightButton = gamepad.getButton(1);
-  fillLeftButton = gamepad.getButton(6);
-  fillRightButton = gamepad.getButton(7);
-  fillBothButton = gamepad.getButton(0);
+  armLeftTrigger = gamepad.getButton(7);
+  armLeftBumper = gamepad.getButton(5);
+  armRightTrigger = gamepad.getButton(8);
+  fireLeftButton = gamepad.getButton(1);
+  fireRightButton = gamepad.getButton(3);
+  fillLeftButton = gamepad.getButton(9);
+  fillRightButton = gamepad.getButton(10);
+  fillBothButton = gamepad.getButton(2);
   
   prevTime = millis();
   
@@ -85,7 +86,7 @@ void draw(){
   float elev = deadband(-elevStick.getValue());
   float turret = deadband(turretStick.getValue());
   
-  boolean armed = (armTrigger.getValue() >= TRIGGER_TOLERANCE && armLeftBumper.pressed());
+  boolean armed = (armLeftTrigger.pressed() && armRightTrigger.pressed() && armLeftBumper.pressed());
   float fireLeft = (armed && fireLeftButton.pressed() && !fireRightButton.pressed()) ? 1.0 : 0.0;
   float fireRight = (armed && fireRightButton.pressed() && !fireLeftButton.pressed()) ? 1.0 : 0.0;
   
